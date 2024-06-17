@@ -1,0 +1,47 @@
+{
+  "name": "image-palette-extractor",
+  "version": "1.0.0",
+  "description": "An basic image color palette extractor!",
+  "main": "./dist/index.es.js",
+  "scripts": {
+    "test": "test",
+    "dev": "vite",
+    "build": "npx vite build",
+    "build:watch": "npx tsc --watch",
+    "publish:package": "npm run build && npx standard-version && git push --follow-tags origin master && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LuizJarduli/image-palette-extractor.git"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "color",
+    "palette",
+    "extraction",
+    "image",
+    "palette",
+    "typescript",
+    "javascript",
+    "rgb",
+    "hexadecimal",
+    "hsl",
+    "canvas",
+    "utils"
+  ],
+  "author": "Luiz Miguel",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/LuizJarduli/image-palette-extractor/issues"
+  },
+  "homepage": "https://github.com/LuizJarduli/image-palette-extractor#readme",
+  "devDependencies": {
+    "typescript": "~5.4.5"
+  }
+}
