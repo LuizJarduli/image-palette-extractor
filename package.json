@@ -2,13 +2,14 @@
   "name": "image-palette-extractor",
   "version": "1.0.0",
   "description": "An basic image color palette extractor!",
-  "main": "./dist/index.es.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "test": "test",
-    "dev": "vite",
-    "build": "npx vite build",
+    "lint": "npx eslint src/*",
+    "test": "echo test",
+    "build": "rm -rf ./dist && npx tsc -p tsconfig.json",
     "build:watch": "npx tsc --watch",
-    "publish:package": "npm run build && npx standard-version && git push --follow-tags origin master && npm publish"
+    "publish:package": "npm run build && npx standard-version && git push --follow-tags origin master && npm publish",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,15 @@
   },
   "homepage": "https://github.com/LuizJarduli/image-palette-extractor#readme",
   "devDependencies": {
-    "typescript": "~5.4.5"
+    "@eslint/js": "^9.17.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.18.2"
   }
 }
