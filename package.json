@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "npx eslint src/*",
     "test": "echo test",
-    "build": "npx tsc -p tsconfig.json",
+    "build": "rm -rf ./dist && npx tsc -p tsconfig.json",
     "build:watch": "npx tsc --watch",
     "publish:package": "npm run build && npx standard-version && git push --follow-tags origin master && npm publish",
     "prepare": "husky"
