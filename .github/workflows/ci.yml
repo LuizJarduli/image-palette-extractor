@@ -41,6 +41,11 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
+    
+      - name: Configure Git credentials
+        run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Authenticate to npm
         run: |
