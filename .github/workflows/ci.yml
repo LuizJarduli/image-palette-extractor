@@ -43,6 +43,15 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
+      
+      - name: Check for recursive commits
+        id: check_recursion
+        run: |
+            LAST_COMMIT=$(git log -1 --pretty=format:'%an')
+            if [ "$LAST_COMMIT" = "github-actions[bot]" ]; then
+              echo "Recursive commit detected, stopping workflow..."
+              exit 1
+            fi
     
       - name: Configure Git credentials
         run: |
