@@ -14,17 +14,29 @@ The library leverages the Canvas API to process images and generate color palett
 
 ## Installation
 
-This is a standalone JavaScript file. Include it in your project using a `<script>` tag or your build system. Example:
+### Using npm
 
-```html
-<script src="path/to/image-palette-extractor.js"></script>
+Install the library via npm:
+
+```bash
+npm install image-palette-extractor
 ```
 
-For ES Modules or bundlers like Webpack/Vite, simply import it:
+Then, import it into your project:
 
 ```javascript
 import { ColorPalette } from 'image-palette-extractor';
 ```
+
+### Using a Standalone File
+
+You can also include it in your project using a `<script>` tag:
+
+```html
+<script src="path/to/index.js"></script>
+```
+
+For ES Modules or bundlers like Webpack/Vite, simply import it as shown above.
 
 ---
 
@@ -77,10 +89,11 @@ A `Promise` that resolves to an array of hexadecimal color strings, sorted by pr
 
 ## Key Features
 
-1. **Browser-Only**: Built exclusively for client-side environments.
-2. **Dependency-Free**: No external libraries required.
-3. **Efficient**: Minimal processing with clear and concise color extraction logic.
-4. **Customizable Palettes**: Select the number of colors to extract.
+1. **Available via npm**: Install easily in any Node.js environment.
+2. **Browser-Only**: Built exclusively for client-side environments.
+3. **Dependency-Free**: No external libraries required.
+4. **Efficient**: Minimal processing with clear and concise color extraction logic.
+5. **Customizable Palettes**: Select the number of colors to extract.
 
 ---
 
