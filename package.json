@@ -1,6 +1,6 @@
 {
   "name": "image-palette-extractor",
-  "version": "1.0.0",
+  "version": "1.0.23",
   "description": "An basic image color palette extractor!",
   "main": "./dist/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "test": "echo test",
     "build": "rm -rf ./dist && npx tsc -p tsconfig.json",
     "build:watch": "npx tsc --watch",
-    "publish:package": "npm run build && npx standard-version && git push --follow-tags origin master && npm publish",
+    "bump:version": "npx standard-version && git push --follow-tags origin master",
+    "publish:package": "npm run build && npm run bump:version && npm publish",
     "prepare": "husky"
   },
   "repository": {
@@ -44,6 +45,7 @@
   "homepage": "https://github.com/LuizJarduli/image-palette-extractor#readme",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
     "@typescript-eslint/parser": "^8.18.2",
     "eslint": "^9.17.0",
@@ -51,7 +53,11 @@
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.14.0",
     "husky": "^9.1.7",
-    "typescript": "^5.4.5",
+    "jest": "^29.7.0",
+    "jest-canvas-mock": "^2.5.2",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.2"
   }
 }
