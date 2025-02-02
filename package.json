@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "npx eslint src/*",
     "test": "echo test",
-    "build": "rm -rf ./dist && npx tsc -p tsconfig.json",
+    "prebuild": "rm -rf ./dist",
+    "build": "npx tsc -p tsconfig.json",
     "build:watch": "npx tsc --watch",
     "bump:version": "npx standard-version && git push --follow-tags origin master",
     "publish:package": "npm run build && npm run bump:version && npm publish",
