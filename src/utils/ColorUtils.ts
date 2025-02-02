@@ -55,6 +55,57 @@ export const rgbaToHex = (r: number, g: number, b: number, a: number): string =>
 };
 
 /**
+ * _rgbToLab
+ *
+ * Converts RGB color to Lab color space.
+ *
+ * @see https://zschuessler.github.io/DeltaE/learn/
+ *
+ * @param r - The red color value (0-255).
+ *
+ * @param g - The green color value (0-255).
+ *
+ * @param b - The blue color value (0-255).
+ */
+export const rgbToLab = (r: number, g: number, b: number): [number, number, number] => {
+  // Convert RGB to XYZ
+  let _r = r / 255;
+  let _g = g / 255;
+  let _b = b / 255;
+
+  _r = _r > 0.04045 ? Math.pow((_r + 0.055) / 1.055, 2.4) : _r / 12.92;
+  _g = _g > 0.04045 ? Math.pow((_g + 0.055) / 1.055, 2.4) : _g / 12.92;
+  _b = _b > 0.04045 ? Math.pow((_b + 0.055) / 1.055, 2.4) : _b / 12.92;
+
+  _r *= 100;
+  _g *= 100;
+  _b *= 100;
+
+  const x = _r * 0.4124564 + _g * 0.3575761 + _b * 0.1804375;
+  const y = _r * 0.2126729 + _g * 0.7151522 + _b * 0.072175;
+  const z = _r * 0.0193339 + _g * 0.119192 + _b * 0.9503041;
+
+  // Convert XYZ to Lab
+  const xRef = 95.047;
+  const yRef = 100.0;
+  const zRef = 108.883;
+
+  let _x = x / xRef;
+  let _y = y / yRef;
+  let _z = z / zRef;
+
+  _x = _x > 0.008856 ? Math.pow(_x, 1 / 3) : 7.787 * _x + 16 / 116;
+  _y = _y > 0.008856 ? Math.pow(_y, 1 / 3) : 7.787 * _y + 16 / 116;
+  _z = _z > 0.008856 ? Math.pow(_z, 1 / 3) : 7.787 * _z + 16 / 116;
+
+  const l = 116 * _y - 16;
+  const a = 500 * (_x - _y);
+  const bLab = 200 * (_y - _z);
+
+  return [l, a, bLab];
+};
+
+/**
  * extractRgbAsTuple
  *
  * Extract the numbers of the provided rgba string and return the tuple containing the values and the alpha.
