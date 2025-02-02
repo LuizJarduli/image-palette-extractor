@@ -1,5 +1,5 @@
 // Utils
-import { extractRgbAsTuple, rgbaToHex } from '../utils/ColorUtils';
+import { extractRgbAsTuple, rgbaToHex, rgbToLab } from '../utils/ColorUtils';
 
 export type TRgba = [number, number, number, number];
 
@@ -7,10 +7,22 @@ export type TRgba = [number, number, number, number];
  * ColorPalette
  *
  * Class for extracting a color palette.
+ */
+/**
+ * A class for extracting color palettes from images.
  *
- * It was developed based on the study of the technologies involved in the article.
+ * This class provides functionality to analyze images and extract their dominant colors,
+ * taking into account color similarity and transparency.
  *
- * @see https://dev.to/producthackers/creating-a-color-palette-with-javascript-44ip
+ * @remarks
+ * The color similarity is calculated using the CIE76 formula, which provides a perceptual
+ * difference between colors that approximates human vision.
+ *
+ * @example
+ * ```typescript
+ * const palette = await ColorPalette.getColors('path/to/image.jpg', 5, 10);
+ * console.log(palette); // ['#FF0000', '#00FF00', '#0000FF', ...]
+ * ```
  */
 export class ColorPalette {
   /**
@@ -22,36 +34,54 @@ export class ColorPalette {
    *
    * @param colorsFromPalette - Number of colors to extract, default is 2.
    *
+   * @param similarityThreshold - Threshold for color similarity based on the CIE76 formula.
+   *
+   * Color Similarity Reference Table:
+   *
+   * | Delta E Value | Perception                                |
+   * |---------------|-------------------------------------------|
+   * | <= 1.0        | Not perceptible to human eye              |
+   * | 1.0 - 2.0     | Perceptible through close observation     |
+   * | 2.0 - 10.0    | Perceptible at a glance                   |
+   * | 11.0 - 49.0   | Colors are more similar than opposite     |
+   * | 100           | Colors are exact opposites                |
+   *
    * @returns Promise with an array of colors in hexadecimal format.
    */
-  public static getColors(imgSrc: string, colorsFromPalette: number = 2): Promise<string[]> {
+  public static getColors(
+    imgSrc: string,
+    colorsFromPalette: number = 2,
+    similarityThreshold: number = 10 // Default to "perceptible at a glance"
+  ): Promise<string[]> {
     const img: HTMLImageElement = new Image();
     img.src = imgSrc;
 
     return new Promise<string[]>((resolve, reject) => {
-      // Waits for the image to load before starting palette extraction
       img.onload = (): void => {
-        // Creates a canvas and sets the loaded image
         const canvas: HTMLCanvasElement = document.createElement('canvas');
         const context: CanvasRenderingContext2D = canvas.getContext('2d')!;
         canvas.width = img.width;
         canvas.height = img.height;
         context.drawImage(img, 0, 0);
 
-        // Iterates over all image pixels and builds a sorted color palette by their presence
         const imageData: ImageData = context.getImageData(0, 0, canvas.width, canvas.height);
         const pixelData: Uint8ClampedArray = imageData.data;
         const colorCounts: Record<string, number> = this._countPixelColors(pixelData);
         const sortedColors: TRgba[] = this._sortColorsByCount(colorCounts);
 
-        // Builds the final palette in hexadecimal format
-        const colorPalette: string[] = this._getPaletteFromSortedColors(
-          sortedColors.slice(0, colorsFromPalette)
+        // Filter out similar colors based on the threshold
+        const distinctColors: TRgba[] = this._filterSimilarColors(
+          sortedColors,
+          similarityThreshold
+        ).slice(0, colorsFromPalette);
+
+        // Build the final palette in hexadecimal format
+        const colorPalette: string[] = distinctColors.map((color) =>
+          rgbaToHex(...extractRgbAsTuple(this._getRgbaColorString(color)))
         );
-        resolve(colorPalette.map((color) => rgbaToHex(...extractRgbAsTuple(color))));
+        resolve(colorPalette);
       };
 
-      // Rejects the promise in case of an image load error.
       img.onerror = (error): void =>
         reject(`An error occurred while loading the image: Error ${error}`);
     });
@@ -61,16 +91,6 @@ export class ColorPalette {
    * _countPixelColors
    *
    * Counts the occurrence of each color present in the pixels of an image.
-   *
-   * @param pixelData - Array of image pixels.
-   *
-   * @returns Object with the occurrence count of each color.
-   *
-   * @example
-   *    {
-   *        '255,255,255,255': 3,
-   *        '245,0,178,0': 2,
-   *    }
    */
   private static _countPixelColors(pixelData: Uint8ClampedArray): Record<string, number> {
     const colorCounts: Record<string, number> = {};
@@ -100,10 +120,6 @@ export class ColorPalette {
    * _sortColorsByCount
    *
    * Sorts the colors from an object containing color counts.
-   *
-   * @param colorCounts Object containing the counts of each color.
-   *
-   * @returns An array of RGBA colors sorted by descending count.
    */
   private static _sortColorsByCount(colorCounts: Record<string, number>): TRgba[] {
     const sortedColors = Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a]);
@@ -111,28 +127,53 @@ export class ColorPalette {
   }
 
   /**
-   * _getPaletteFromSortedColors
+   * _filterSimilarColors
    *
-   * Returns an array of strings representing the RGBA colors of a palette.
-   *
-   * @param sortedColors Array of RGBA colors sorted by descending count.
-   *
-   * @param colorsFromPalette Number of colors to include in the palette.
-   *
-   * @returns An array of strings representing the RGBA colors.
+   * Filters out colors that are too similar to those already in the palette.
    */
-  private static _getPaletteFromSortedColors(sortedColors: TRgba[]): string[] {
-    return sortedColors.map((color) => this._getRgbaColorString(color));
+  private static _filterSimilarColors(colors: TRgba[], threshold: number): TRgba[] {
+    const distinctColors: TRgba[] = [];
+
+    for (const color of colors) {
+      const shouldPushColor =
+        distinctColors.length === 0 ||
+        !distinctColors.some(
+          (existingColor) => this._colorDifference(color, existingColor) < threshold
+        );
+
+      if (shouldPushColor) {
+        distinctColors.push(color);
+      }
+    }
+
+    return distinctColors;
+  }
+
+  /**
+   * _colorDifference
+   *
+   * Calculates the difference between two colors using the CIE76 formula.
+   */
+  private static _colorDifference(color1: TRgba, color2: TRgba): number {
+    const [r1, g1, b1] = color1;
+    const [r2, g2, b2] = color2;
+
+    // Convert RGB to Lab color space
+    const lab1 = rgbToLab(r1, g1, b1);
+    const lab2 = rgbToLab(r2, g2, b2);
+
+    // Calculate CIE76 color difference
+    const deltaL = lab1[0] - lab2[0];
+    const deltaA = lab1[1] - lab2[1];
+    const deltaB = lab1[2] - lab2[2];
+
+    return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
   }
 
   /**
    * _getRgbaColorString
    *
    * Returns a string representing the RGBA color.
-   *
-   * @param rgbaArray Array of 4 numbers representing the R, G, B, and A values of the color.
-   *
-   * @returns A string in the format 'rgba(r, g, b, a)' representing the RGBA color in CSS.
    */
   private static _getRgbaColorString(rgbaArray: TRgba): string {
     const [r, g, b, a] = rgbaArray;
