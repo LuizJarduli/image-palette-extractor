@@ -1,4 +1,4 @@
-# image-palette-extractor
+# image-palette-extractor [![npm version](https://badge.fury.io/js/image-palette-extractor.svg)](https://badge.fury.io/js/image-palette-extractor) [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 **A simple, client-side, dependency-free tool to extract color palettes from images!**
 
@@ -80,10 +80,11 @@ ColorPalette.getColors(imageUrl, 5)
 
 - **`imgSrc`**: The path to the image (supports URLs and base64 strings).
 - **`colorsFromPalette`**: _(Optional)_ Number of colors to extract. Defaults to 2.
+- **similarityThreshold**: _(Optional)_ Similarity threshold for color comparison. Defaults to 0.1.
 
 #### Returns
 
-A `Promise` that resolves to an array of hexadecimal color strings, sorted by prominence.
+A `Promise` that resolves to an array of hexadecimal color strings, sorted by prominence and filtered by similarity threshold based on CIE76 calculus.
 
 ---
 
@@ -105,14 +106,18 @@ To modify or extend the library, see the main file. Utilities for color conversi
 
 - `rgbaToHex(r, g, b, a)`: Converts RGBA values to a hexadecimal string.
 - `rgbToHex(r, g, b)`: Converts RGB values to a hexadecimal string.
+- `rgbToLab(r, g, b)`: Converts RGB values to CIELAB color space.
+- `getLuminanceFromHex`: Calculates the luminance of a color from its hexadecimal representation.
 
 Example usage:
 
 ```javascript
-import { rgbaToHex, rgbToHex } from 'image-palette-extractor';
+import { rgbaToHex, rgbToHex, rgbToLab} from 'image-palette-extractor';
 
 console.log(rgbToHex(255, 165, 0)); // Output: #ffa500
 console.log(rgbaToHex(255, 165, 0, 0.5)); // Output: #ffa50080
+console.log(rgbToLab(255, 165, 0)); // Output: [ 70.9, 23.1, 70.7 ]
+console.log(getLuminanceFromHex('#ffa500')); // Output: 0.58
 ```
 
 ---
