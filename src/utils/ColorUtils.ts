@@ -121,6 +121,32 @@ export const extractRgbAsTuple = (rbgaString: string): TRgba => {
 };
 
 /**
+ * getLuminanceFromHex
+ *
+ * Calculates the luminance of a color from its hexadecimal representation.
+ *
+ * @remarks
+ *
+ * If the luminance is greater than 0.5, the background is
+ * considered light, so you should use a dark text color.
+ * If the luminance is less than or equal to 0.5, the
+ * background is considered dark, so you should use a light text color.
+ *
+ * @param hex - The hexadecimal color string.
+ *
+ * @returns The luminance of the color.
+ */
+export const getLuminanceFromHex = (hex: string): number => {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+  // Calculate luminance
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance;
+};
+
+/**
  * componentToHex
  *
  * Converts an RGB component value to a two-digit hexadecimal string.
