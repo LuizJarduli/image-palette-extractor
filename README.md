@@ -112,7 +112,7 @@ To modify or extend the library, see the main file. Utilities for color conversi
 Example usage:
 
 ```javascript
-import { rgbaToHex, rgbToHex, rgbToLab} from 'image-palette-extractor';
+import { rgbaToHex, rgbToHex, rgbToLab} from 'image-palette-extractor/utils';
 
 console.log(rgbToHex(255, 165, 0)); // Output: #ffa500
 console.log(rgbaToHex(255, 165, 0, 0.5)); // Output: #ffa50080
