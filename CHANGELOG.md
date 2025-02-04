@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0 (2025-02-04)
+
+
+### Features
+
+* **ColorUtils:** index barrel file for utility functions ([1d9158a](https://github.com/LuizJarduli/image-palette-extractor/commit/1d9158af45e4c2be17142e1e224d35f98817d4cb))
+
 ### 1.0.31 (2025-02-03)
 
 ### 1.0.30 (2025-02-03)
