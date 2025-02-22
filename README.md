@@ -10,6 +10,10 @@ The `image-palette-extractor` library allows you to extract dominant colors from
 
 The library leverages the Canvas API to process images and generate color palettes in hexadecimal format. With no external dependencies, it's lightweight and efficient!
 
+### Live Demo
+
+Check out the live demo [here](https://luizjarduli.github.io/image-palette-extractor-demo/) to see the image-palette-extractor in action.
+
 ### Support
 
 feel free to buy me a Coffee
