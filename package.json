@@ -1,6 +1,6 @@
 {
   "name": "image-palette-extractor",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "An basic image color palette extractor!",
   "main": "./dist/index.js",
   "scripts": {
